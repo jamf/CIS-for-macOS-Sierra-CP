@@ -111,7 +111,7 @@ NOTES:
 * Item "6.4 Safari disable Internet Plugins for global use (Not Scored)" is disabled by default.
 * Item "6.5 Use parental controls for systems that are not centrally managed (Not Scored)" is disabled by default.
 
-## 2_Security_Audit_Compliance_ORG or 2_Security_Audit_Compliance_API can be used in the policy.  
+ __2_Security_Audit_Compliance_ORG or 2_Security_Audit_Compliance_API can be used in the policy.__
 
 ### 2_Security_Audit_Compliance_ORG
 
