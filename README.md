@@ -60,11 +60,12 @@ replacing Username_String with a Jamf Pro API username that has PUT permission f
 
 * Add the configured script to your Jamf Pro server and configure the parameter labels for parameter 4 (API Username Encrypted String) and parameter 5 (API Password Encrypted String).
 
-* Create a single Jamf Policy using all three scripts.
-1_Set_Organization_Priorities - Script Priority: Before
-2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API - Script Priority: Before
-3_Security_Remediation - Script Priority: Before
-2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API - Script Priority: After
+* Create a single Jamf Policy using all three scripts.  
+1_Set_Organization_Priorities - Script Priority: Before  
+2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API - Script Priority: Before  
+3_Security_Remediation - Script Priority: Before  
+2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API - Script Priority: After  
+
 For script 2_Security_Audit_Compliance enter the values generated when you configured lines 52 and 53 in parameters 4 and 5. 
 
 * Policy: Some recurring trigger to track compliance over time. 
