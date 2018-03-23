@@ -1,29 +1,30 @@
-# INFO:
+# CIS for macOS Sierra - Script and Configuration Profile Remediation
+## INFO:
 
 Refers to document CIS_Apple_OSX_10.12_Benchmark_v1.0.0.pdf, available at https://benchmarks.cisecurity.org
 
-# USAGE:
+## USAGE:
 * Create Extension Attributes using the following scripts:
-## 2.5_Audit_List Extension Attribute
+### 2.5_Audit_List Extension Attribute
 
 Set as Data Type "String."
 Reads contents of /Library/Application Support/SecurityScoring/org_audit file and records to Jamf Pro inventory record.
 
-## 2.6_Audit_Count Extension Attribute
+### 2.6_Audit_Count Extension Attribute
 
 Set as Data Type "Integer." 
 Reads contents of /Library/Application Support/SecurityScoring/org_audit file and records count of items to Jamf Pro inventory record. Usable with smart group logic (2.6_Audit_Count greater than 0) to immediately determine computers not in compliance.
 
-* After creation, make note of the ID number of these Extension Attributes.  To find the ID, select the Extension Attribute then click into your browser's address bar.  The ID number is after the "id=" in the URL. 
+1. After creation, make note of the ID number of these Extension Attributes.  To find the ID, select the Extension Attribute then click into your browser's address bar.  The ID number is after the "id=" in the URL. 
 
-* Add the following scripts to your Jamf Pro
-1_Set_Organization_Priorities - Script Priority
-2_Security_Audit_Compliance - Script Priority
-3_Security_Remediation - Script Priority
+2. Add the following scripts to your Jamf Pro  
+* 1_Set_Organization_Priorities  
+* 2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API  
+* 3_Security_Remediation
 
-Scripts 1 and 2 will need additional configuration prior to deployment.
+Scripts __1_Set_Organization_Priorities__ and __2_Security_Audit_Compliance_API__ will need additional configuration prior to deployment.
 
-## 1_Set_Organization_Priorities
+### 1_Set_Organization_Priorities
 
 Admins set organizational compliance for each listed item, which gets written to plist. The values default to "true," meaning if an organization wishes to disregard a given item they must set the value to false by changing the associated comment:
 
@@ -31,7 +32,7 @@ OrgScore1_1="true" or OrgScore1_1="false"
 
 The script writes to /Library/Application Support/SecurityScoring/org_security_score.plist by default.
 
-## 2_Security_Audit_Compliance
+### 2_Security_Audit_Compliance_API
 
 Configure the following variables in the script:
 
@@ -61,13 +62,13 @@ replacing Username_String with a Jamf Pro API username that has PUT permission f
 
 * Create a single Jamf Policy using all three scripts.
 1_Set_Organization_Priorities - Script Priority: Before
-2_Security_Audit_Compliance - Script Priority: Before
+2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API - Script Priority: Before
 3_Security_Remediation - Script Priority: Before
-2_Security_Audit_Compliance - Script Priority: After
+2_Security_Audit_Compliance_ORG __or__ 2_Security_Audit_Compliance_API - Script Priority: After
 For script 2_Security_Audit_Compliance enter the values generated when you configured lines 52 and 53 in parameters 4 and 5. 
 
 * Policy: Some recurring trigger to track compliance over time. 
-__Do not add Update Inventory as the API entries in script 2_Security_Audit_Compliance will populate the appropriate Extension Attributes.__
+__Do not add Update Inventory if using the API script as the API entries in script 2_Security_Audit_Compliance will populate the appropriate Extension Attributes.  If using 2_Security_Audit_Compliance_ORG, add Update Inventory.__
 
 
 NOTES: 
@@ -109,15 +110,24 @@ NOTES:
 * Item "6.4 Safari disable Internet Plugins for global use (Not Scored)" is disabled by default.
 * Item "6.5 Use parental controls for systems that are not centrally managed (Not Scored)" is disabled by default.
 
+## 2_Security_Audit_Compliance_ORG or 2_Security_Audit_Compliance_API can be used in the policy.  
 
-## 2_Security_Audit_Compliance
+### 2_Security_Audit_Compliance_ORG
 
 Run this before and after 3_Security_Remediation to audit the Remediation
 Reads the plist at /Library/Application Support/SecurityScoring/org_security_score.plist. For items prioritized (listed as "true,") the script queries against the current computer/user environment to determine compliance against each item.
 
 Non-compliant items are recorded at /Library/Application Support/SecurityScoring/org_audit
 
-## 3_Security_Remediation
+### 2_Security_Audit_Compliance_API
+
+Run this before and after 3_Security_Remediation to audit the Remediation
+Reads the plist at /Library/Application Support/SecurityScoring/org_security_score.plist. For items prioritized (listed as "true,") the script queries against the current computer/user environment to determine compliance against each item. 
+
+Non-compliant items are recorded at /Library/Application Support/SecurityScoring/org_audit. Using the REST API, the values for Extension Attributes 2_5 and 2_6 are updated
+
+
+### 3_Security_Remediation
 
 Run 2_Security_Audit_Compliance after to audit the Remediation
 Reads the plist at /Library/Application Support/SecurityScoring/org_security_score.plist. For items prioritized (listed as "true,") the script applies recommended remediation actions for the client/user.
@@ -133,17 +143,17 @@ SCORED CIS EXCEPTIONS:
 * 2.11 Java 6 is not the default Java runtime
 * 5.18 System Integrity Protection status
 
-# REMEDIATED USING CONFIGURATION PROFILES:
+## REMEDIATED USING CONFIGURATION PROFILES:
 The following Configuration profiles are available in mobileconfig and plist form.  If you wish to change a particular setting, edit the plist in question.  Mobileconfigs can be uploaded to Jamf Pro Configuration Profiles as is and plists can be added to a new Configuration Profile as Custom Payloads.
 
-## CIS 10.12 Custom Settings mobileconfig
+### CIS 10.12 Custom Settings mobileconfig
 * 1.2 Enable Auto Update
 * 1.4 Enable system data files and security update installed
 * 2.10 Enable Secure Keyboard Entry in terminal.app 
 * 4.1 Disable Bonjour advertising service 
 * 6.1.4 Disable "Allow guests to connect to shared folders" 
 * 6.3 Disable the automatic run of safe files in Safari
-## CIS 10.12 LoginWindow Security_and_Privacy ScreenSaver mobileconfig
+### CIS 10.12 LoginWindow Security_and_Privacy ScreenSaver mobileconfig
 * 2.3.1 Set an inactivity interval of 20 minutes or less for the screen saver 
 * 2.3.2 Secure screen saver corners 
 * 2.3.4 Set a screen corner to Start Screen Saver 
@@ -159,7 +169,7 @@ The following Configuration profiles are available in mobileconfig and plist for
 * 6.1.1 Display login window as name and password 
 * 6.1.2 Disable "Show password hints" 
 * 6.1.3 Disable guest account 
-## CIS 10.12 Restrictions mobileconfig
+### CIS 10.12 Restrictions mobileconfig
 * 2.7.1.02 Disable the iCloud system preference pane (Not Scored)
 * 2.7.1.03 Disable the use of iCloud password for local accounts (Not Scored)
 * 2.7.1.04 Disable iCloud Back to My Mac (Not Scored)
