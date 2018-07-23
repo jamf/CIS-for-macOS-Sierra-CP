@@ -1223,7 +1223,6 @@ if [ "$Audit5_7" = "1" ]; then
 		[ "$rootEnabledRemediate" = "1" ]; then
 		   echo $(date -u) "5.7 passed due to remediation" | tee -a "$logFile"
 		   defaults write "$plistlocation" OrgScore5_7 -bool false
-		else
 	fi
 fi
 
